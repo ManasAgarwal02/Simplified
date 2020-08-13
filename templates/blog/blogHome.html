@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Simplified
+{% endblock %}
+
+{% block css %} {% endblock %}
+
+{% block body %}
+
+    <div class="container my-3">
+        {# Blog post start from here#}
+
+        {% for blog in allBlogs %}
+            <div class="my-4">
+                <div class="row no-gutters border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+                    <div class="col p-4 d-flex flex-column position-static">
+                        <strong class="d-inline-block mb-2 text-primary">By- {{ blog.blog_author }}</strong>
+                        <h3 class="mb-0">{{ blog.blog_title}}</h3>
+                        <div class="mb-1 text-muted">{{ blog.timeStamp }}</div>
+                        <p class="card-text mb-auto">{{ blog.blog_content|truncatechars:50 }}</p>
+                        <a href="/blog/{{ blog.smug }}" class="stretched-link">Continue reading</a>
+                    </div>
+                    <div class="col-auto d-none d-lg-block">
+                        <svg class="bd-placeholder-img" width="200" height="250" xmlns="http://www.w3.org/2000/svg"
+                             preserveAspectRatio="xMidYMid slice" focusable="false" role="img"
+                             aria-label="Placeholder: Thumbnail"><title>Placeholder</title>
+                            <rect width="100%" height="100%" fill="#55595c"></rect>
+                            <text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
+
+{% block js %} {% endblock %}
+{% block blog %}active{% endblock %}

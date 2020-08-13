@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Simplified blogs
+{% endblock %}
+
+{% block css %}
+    <style>
+
+        .be-comment-block {
+            margin-bottom: 50px !important;
+            border: 1px solid #edeff2;
+            border-radius: 2px;
+            padding: 50px 70px;
+            border: 1px solid #ffffff;
+        }
+
+        .be-img-comment {
+            width: 60px;
+            height: 60px;
+            float: left;
+            margin-bottom: 15px;
+        }
+
+        .be-ava-comment {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+        }
+
+        .be-comment-content {
+            margin-left: 80px;
+        }
+
+        .be-comment-content span {
+            display: inline-block;
+            width: 49%;
+            margin-bottom: 15px;
+        }
+
+        .be-comment-name {
+            font-size: 13px;
+            font-family: 'Conv_helveticaneuecyr-bold';
+        }
+
+        .be-comment-content a {
+            color: #383b43;
+        }
+
+        .be-comment-content span {
+            display: inline-block;
+            width: 49%;
+            margin-bottom: 15px;
+        }
+
+        .be-comment-time {
+            text-align: right;
+        }
+
+        .be-comment-time {
+            font-size: 11px;
+            color: #b4b7c1;
+        }
+
+        .be-comment-text {
+            font-size: 15px;
+            line-height: 18px;
+            color: #7a8192;
+            display: block;
+            background: #f6f6f7;
+            border: 1px solid #edeff2;
+            padding: 15px 20px 20px 20px;
+        }
+
+        .form-group.fl_icon .icon {
+            position: absolute;
+            top: 1px;
+            left: 16px;
+            width: 48px;
+            height: 48px;
+            background: #f6f6f7;
+            color: #b5b8c2;
+            text-align: center;
+            line-height: 50px;
+            -webkit-border-top-left-radius: 2px;
+            -webkit-border-bottom-left-radius: 2px;
+            -moz-border-radius-topleft: 2px;
+            -moz-border-radius-bottomleft: 2px;
+            border-top-left-radius: 2px;
+            border-bottom-left-radius: 2px;
+        }
+
+        .form-group .form-input {
+            font-size: 13px;
+            line-height: 50px;
+            font-weight: 400;
+            color: #b4b7c1;
+            width: 100%;
+            height: 50px;
+            padding-left: 20px;
+            padding-right: 20px;
+            border: 1px solid #edeff2;
+            border-radius: 3px;
+        }
+
+        .form-group.fl_icon .form-input {
+            padding-left: 70px;
+        }
+
+        .form-group textarea.form-input {
+            height: 150px;
+        }
+
+    </style>
+{% endblock %}
+
+{% block body %}
+    {% load humanize %}
+    {% load extras %}
+    <div role="main" class="container my-3">
+        <div class="row">
+            <div class="col-md-8 blog-main">
+                <h3 class="pb-4 mb-4 font-italic border-bottom">
+                    From the Firehose
+                </h3>
+
+                <div class="blog-post">
+                    <h2 class="blog-post-title">{{ blog.blog_title }}</h2>
+                    <p class="blog-post-meta">{{ blog.timeStamp }} by <a href="#">{{ blog.blog_author }}</a></p>
+
+                    <hr>
+                    <p>{{ blog.blog_content }}</p>
+                </div><!-- /.blog-post -->
+
+
+            </div><!-- /.blog-main -->
+
+            <aside class="col-md-4 blog-sidebar">
+                <div class="p-4 mb-3 bg-light rounded">
+                    <h4 class="font-italic">About</h4>
+                    <p class="mb-0">Etiam porta <em>sem malesuada magna</em> mollis euismod. Cras mattis consectetur
+                        purus sit amet fermentum. Aenean lacinia bibendum nulla sed consectetur.</p>
+                </div>
+
+
+                <div class="p-4">
+                    <h4 class="font-italic">Elsewhere</h4>
+                    <ol class="list-unstyled">
+                        <li><a href="#">GitHub</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Facebook</a></li>
+                    </ol>
+                </div>
+            </aside><!-- /.blog-sidebar -->
+
+        </div><!-- /.row -->
+        {# Comments #}
+        <div class=container>
+            <h4>Comments <span>({{ comments|length }})</span></h4>
+            {% if user.is_authenticated %}
+                <form action="/blog/postComment/" method="post">
+                    {% csrf_token %}
+                    <input class="form-control" type="text" name="comment" placeholder="Enter comment here">
+                    <input type="hidden" name="postSno" value="{{ blog.blog_id }}">
+                    <input type="hidden" name="commentSno" value="">
+                    <button type="submit" class="btn btn-secondary my-2">Comment</button>
+                </form>
+            {% else %}
+                <p><b><i>Please login to post a comment.</i></b></p>
+            {% endif %}
+
+
+            <div class="be-comment-block">
+                {% for comment in comments %}
+
+                    <div class="be-comment">
+                        <div class="be-img-comment">
+                            <a href="#">
+                                <img src="/static/img/userPro.png" alt="" class="be-ava-comment">
+                            </a>
+                        </div>
+                        <div class="be-comment-content">
+				<span class="be-comment-name mt-4">
+					<a href="#" style="font-size: 20px">{{ comment.user }}</a>
+					</span>
+                            <span class="be-comment-time">
+					<i class="fa fa-clock-o"></i>
+					{{ comment.timeStamp|naturaltime }}
+				</span>
+
+                            <div class="be-comment-text">
+                                {{ comment.comment }}<br>
+                                <!-- Reply button -->
+                                <button class="btn btn-sm btn-outline-primary my-2" type="button" data-toggle="collapse"
+                                        data-target="#replyButton{{ comment.Sno }}"
+                                        aria-expanded="false" aria-controls="collapseExample">
+                                    Reply
+                                </button>
+                                <hr>
+                                <div class="collapse" id="replyButton{{ comment.Sno }}">
+                                    <div class="card card-body">
+                                        {% if user.is_authenticated %}
+                                            <form action="/blog/postComment/" method="post">
+                                                {% csrf_token %}
+                                                <input class="form-control" type="text" name="comment"
+                                                       placeholder="Enter Reply here">
+                                                <input type="hidden" name="postSno" value="{{ blog.blog_id }}">
+                                                <input type="hidden" name="commentSno" value="{{ comment.Sno }}">
+                                                <button type="submit" class="btn btn-secondary my-2">Reply</button>
+                                            </form>
+                                        {% else %}
+                                            Please login to reply and comment on a blog.
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {#                        replies shown from here #}
+                                <div class="replies my-3">
+                                    {% for reply in replyDict|get_val:comment.Sno %}
+                                        <span><b>{{ reply.user }}</b> replies:
+                                <span class="mx-4"><i>{{ reply.timeStamp|naturaltime }}</i><br></span></span>
+                                        <div class="my-2">
+                                            {{ reply.comment }}
+                                        </div>
+                                        <hr>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                {% endfor %}
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %} {% endblock %} 
